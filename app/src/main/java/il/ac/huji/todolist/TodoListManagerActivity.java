@@ -21,11 +21,14 @@ public class TodoListManagerActivity extends AppCompatActivity {
 
     ArrayList<TaskObject> listItems=new ArrayList<TaskObject>();
     costumeAdapter<TaskObject> adapter;
+    ToDoDBHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list_manager);
+        myDb = new ToDoDBHelper(this);
+        listItems = myDb.getAllTask();
         adapter = new costumeAdapter(this,0,listItems);
         ListView lv = (ListView) findViewById(R.id.lstTodoItems);
         lv.setAdapter(adapter);
@@ -40,7 +43,9 @@ public class TodoListManagerActivity extends AppCompatActivity {
                     builder.setTitle(curItem)
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    listItems.remove(pos);
+                                    TaskObject task = listItems.get(pos);
+                                    adapter.remove(task);
+                                    myDb.deleteTask(task);
                                     adapter.notifyDataSetChanged();
                                 }
                             });
@@ -55,7 +60,9 @@ public class TodoListManagerActivity extends AppCompatActivity {
                     builder.setTitle(curItem)
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    listItems.remove(pos);
+                                    TaskObject task = listItems.get(pos);
+                                    adapter.remove(task);
+                                    myDb.deleteTask(task);
                                     adapter.notifyDataSetChanged();
                                 }
                             }).setNeutralButton(curItem, new DialogInterface.OnClickListener() {
@@ -113,6 +120,7 @@ public class TodoListManagerActivity extends AppCompatActivity {
                 String curDate = String.valueOf(day)+'-'+String.valueOf(month)+'-'+String.valueOf(year);
                 TaskObject curTask = new TaskObject (title, curDate);
                 listItems.add(curTask);
+                myDb.addTask(curTask);
                 adapter.notifyDataSetChanged();
             }
         }
